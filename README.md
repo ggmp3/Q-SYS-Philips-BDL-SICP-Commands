@@ -10,11 +10,11 @@
 - However, if a response is not received within 500 milliseconds a retry may be triggered.
 
 - Command Packet format:
-- Byte 1: MsgSize
-- Byte 2: Control / Monitor ID (set within the display = 1 to 255(0x01 to 0xFF))
-- Byte 3: Group (Group ID range = 1 to 254(0x01 to 0xFE))
-- Byte 4 to Byte 39: Data[0] to Data[N]. Data parameters. This field can also be empty.
-- Last Byte: Checksum (range = 0 to 255(0x00 to 0xFF))
+Byte 1: MsgSize
+Byte 2: Control / Monitor ID (set within the display = 1 to 255(0x01 to 0xFF))
+Byte 3: Group (Group ID range = 1 to 254(0x01 to 0xFE))
+Byte 4 to Byte 39: Data[0] to Data[N]. Data parameters. This field can also be empty.
+Last Byte: Checksum (range = 0 to 255(0x00 to 0xFF))
 
 
 - See Command tables below for controls that were unable to be tested as they're not supported on the xxBDL3511Q models.
