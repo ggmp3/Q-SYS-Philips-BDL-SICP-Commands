@@ -1,3 +1,4 @@
+--[[
 # Q-SYS-Philips-BDL-SICP-Commands
 
 - Written by Glen Gorton (glen.gorton@gmail.com)
@@ -68,4 +69,68 @@ GetCommands = {
   getPICTURE_FORMAT = {0x3B},  
   getFREEZEIMAGE = {0x76}, -- SICP v2.06 onwards.  
   getSTORAGELOCK = {0xF2}, -- NACK - Not Acknowledged: Checksum/Format error on xxBDL3511Q  
-}
+}  
+
+SetCommands = {  
+  setPOWER_STATE = {0x18},  
+  setCOLD_START_STATE = {0xA3},  
+  setPOWER_SAVE_MODE = {0xD2},  
+  setSMART_POWER_MODE = {0XDD},  
+  setADVANCED_POWER_MANAGEMENT = {0xD0}, -- Supported on Himalaya & Eagle 1.3 Platforms. NACK - Not Acknowledged ON xxBDL3511Q  
+  setECO_MODE = {0x64}, -- SICP v2.00 onwards. NACK - Not Acknowledged: Checksum/Format error on xxBDL3511Q  
+  setMONITOR_RESTART = {0x57}, -- SICP v2.02 onwards. This command is used to restart/reboot the display.  
+  setBACKLIGHT = {0x72}, -- SICP v2.03 onwards  
+  setOPS_POWER_SETTING = {0x6F}, -- SICP v2.08 onwards -- NACK - Not Acknowledged: Checksum/Format error. Unable to test on xxBDL3511Q running SICP v2.06  
+  setINPUT_SOURCE = {0xAC},  
+  setBOOT_SOURCE = {0xBB}, -- SICP v2.05 onwards  
+  setSIGNAL_AUTO_DETECTION = {0xAE},  
+  setVOLUME = {0x44}, -- Speaker Volume and Audio Out Volume values are inserted at the Volume Eventhandler.  
+  setVOLUME_STEP = {0x41}, -- Speaker Volume and Audio Out Volume values are inserted at the Volume Step Eventhandler.  
+  setMUTE = {0x47}, -- SICP v2.05 onwards. Mutes both the internal speakers and the audio output.  
+  setSPEAKERS = {0x8E}, -- SICP v2.07 onwards. -- NACK - Not Acknowledged: Checksum/Format error. Unable to test on xxBDL3511Q running SICP v2.06  
+  setREMOTELOCK = {0x1C},  
+  setKEYPADLOCK = {0x1A},  
+  setVIDEO_PARAMETERS = {0x32},  
+  setPICTURE_FORMAT = {0x3A},  
+  setFREEZEIMAGE = {0x77}, -- SICP v2.06 onwards.  
+  setSTORAGELOCK = {0xF1}, -- NACK - Not Acknowledged: Checksum/Format error on xxBDL3511Q  
+  setSEND_SCREENSHOT = {0x58}, -- SICP v2.02 onwards. This command is used to Take a screenshot of current source and send it via Email. NACK - Not Acknowledged: Checksum/Format error on xxBDL3511Q  
+}  
+
+PollCommands = {  
+  {0xAB}, --getNUMBER_OF_INPUT_SOURCES -- SICP v2.05 onwards  
+  {0xAD}, --getINPUT_SOURCE  
+  {0xBA}, --getBOOT_SOURCE -- SICP v2.05 onwards  
+  {0x33}, --getVIDEO_PARAMETERS  
+  {0x19}, --getPOWER_STATE  
+  {0xA2, 0x00}, --getSICP_VERSION  
+  {0xA2, 0x01}, --getPLATFORM_LABEL  
+  {0xA2, 0x02}, --getPLATFORM_VERSION  
+  {0xA1, 0x00}, --getMODEL_NUMBER  
+  {0xA1, 0x01}, --getFIRMWARE_VERSION  
+  {0xA1, 0x02}, --getBUILD_DATE  
+  {0xA1, 0x03}, --getANDROID_VERSION -- NAV - Not Available on xxBDL3511Q  
+  {0xA1, 0x04}, --getHDMI_SWITCH_VERSION -- SICP v2.09 onwards -- NAV - Not Available on xxBDL3511Q  
+  {0xA1, 0x05}, --getLAN_FW_VERSION -- SICP v2.09 onwards -- NAV - Not Available on xxBDL3511Q  
+  {0xA1, 0x06}, --getHDMI_SWITCH2_VERSION -- SICP v2.10 onwards -- NAV - Not Available on xxBDL3511Q  
+  {0x0F, 0x02}, --getOPERATING_HOURS  
+  {0x2F}, --getTEMPERATURE_SENSOR  
+  {0x15}, --getSERIAL_NUMBER  
+  {0x59}, --getVIDEO_SIGNAL_PRESENT -- SICP v2.03 onwards  
+  {0xA4}, --getCOLD_START_STATE  
+  {0xD3}, --getPOWER_SAVE_MODE  
+  {0xDE}, --getSMART_POWER_MODE  
+  {0xD1}, --getADVANCED_POWER_MANAGEMENT -- Supported on Himalaya & Eagle 1.3 Platforms. NACK - Not Acknowledged ON xxBDL3511Q  
+  {0x63}, --getECO_MODE -- SICP v2.00 onwards. NACK - Not Acknowledged: Checksum/Format error on xxBDL3511Q  
+  {0x71}, --getBACKLIGHT -- SICP v2.03 onwards  
+  {0x6E}, --getOPS_POWER_SETTING -- SICP v2.08 onwards -- NACK - Not Acknowledged: Checksum/Format error. Unable to test on xxBDL3511Q running SICP v2.06  
+  {0xAF}, --getSIGNAL_AUTO_DETECTION  
+  {0x45}, --getVOLUME  
+  {0x46}, --getMUTE -- SICP v2.05 onwards. Mutes both the internal speakers and the audio output.  
+  {0x8F}, --getSPEAKERS -- SICP v2.07 onwards. -- NACK - Not Acknowledged: Checksum/Format error. Unable to test on xxBDL3511Q running SICP v2.06  
+  {0x1D}, --getREMOTELOCK  
+  {0x1B}, --getKEYPADLOCK  
+  {0x3B}, --getPICTURE_FORMAT  
+  {0x76}, --getFREEZEIMAGE -- SICP v2.06 onwards.  
+  {0xF2}, --getSTORAGELOCK -- NACK - Not Acknowledged: Checksum/Format error on xxBDL3511Q  
+}  
