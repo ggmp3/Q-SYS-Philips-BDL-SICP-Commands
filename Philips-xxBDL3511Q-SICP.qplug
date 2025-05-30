@@ -321,11 +321,11 @@ Master_Object = {{
             Name = "External Storage Lock",
             PrettyName = "Security~External Storage Lock",
             Label = "External Storage Lock",
-            ControlType = "Text",
-            Style = "ComboBox",
+            ControlType = "Button",
+            ButtonType = "Toggle",
             PinStyle = "Both",
             UserPin = true,
-            Size = Sizes.Text,
+            Size = Sizes.Button,
             GridPos = 3
         }}
       }, {
