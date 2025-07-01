@@ -1,4 +1,3 @@
---[[
 # Q-SYS-Philips-BDL-SICP-Commands
 
 - Written by Glen Gorton (glen.gorton@gmail.com)
@@ -13,7 +12,7 @@
 - Command Packet format:
 Byte 1: MsgSize  
 Byte 2: Control / Monitor ID (set within the display = 1 to 255(0x01 to 0xFF))  
-Byte 3: Group (Group ID range = 1 to 254(0x01 to 0xFE))  
+Byte 3: Group (Group ID range = 1 to 254(0x01 to 0xFE))
 Byte 4 to Byte 39: Data[0] to Data[N]. Data parameters. This field can also be empty.  
 Last Byte: Checksum (range = 0 to 255(0x00 to 0xFF))  
 
@@ -31,17 +30,80 @@ Last Byte: Checksum (range = 0 to 255(0x00 to 0xFF))
 
 - Unable to test 'Send screenshot' function. Email server configuration not available on the 65BDL3511Q.
 
+- Older models not running SICP v2.05 or later are unable to respond to getNUMBER_OF_INPUT_SOURCES which populates the 'Input Source' and 'Boot On Source' combo box and 'Number Of Input Sources' text box.
+- If the 'Input Source' control pin is exposed, the script is still able to send discrete commands when a component such as a Selector is used to send input strings from the AllInputSources table (below).
+
+
+## 24th June 2025 (v1.1)
+- Created tables 'AllPhilipsInputSources' and 'AllPhilipsBootOnSources' that contains all input and boot sources based on the SICP v2.06 document.
+- For displays that don't support the getNUMBER_OF_INPUT_SOURCES command they will respond with NAV or NACK. (ie. 43BDL4051T SICP v2.01 = NACK, 75BDL3151T SICP v2.04 = NAV)
+- When NAV or NACK is returned the Controls will be udpdated:
+- Controls["Input Source"].Choices = AllPhilipsInputSources
+- Controls["Boot On Source"].Choices = AllPhilipsBootOnSources
+- This allows the plugin to send the command for any input selected source, though the end user will need to know what sources are supported on the display.
+
+- Modified the Initialize() function to select 0.5secs as the default Poll Interval (Controls["Poll Interval"].String = Controls["Poll Interval"].Choices[4])
+
+- Moved getMODEL_NUMBER up the PollCommands table to be the 4th item polled to allow for some logic based on model#:
+- Found 75BDL3151T and 43BDL4051T can fail when polled too frequently. Within the getMODEL_NUMBER response ("\xA1") added an if statement to adjust Controls["Poll Interval"].String based on model#.
+- Found 75BDL3151T will not respond to getANDROID_VERSION. Within the getMODEL_NUMBER response ("\xA1"), Controls["Android Version"].String will update to "n/a"
+- Found 75BDL3151T will not reliably respond to getVIDEO_PARAMETERS, getVOLUME, getBUILD_DATE. Decision made that 75BDL3151T will not function reliably with this plugin.
+
+- Within PollTimer.EventHandler, added logic to remove certain items from Polling for the 75BDL3151T. CurrentPollCommand will be increased by 1 (or reset to 1) to skip over the unsupported commands (getANDROID_VERSION,  getSTORAGELOCK)
+
+
+
+Philips Input Sources Table
+AllInputSources = {
+  [1] = "VIDEO",
+  [2] = "S-VIDEO",
+  [3] = "COMPONENT",
+  [4] = "CVI 2", --(not applicable)
+  [5] = "VGA",
+  [6] = "HDMI 2",
+  [7] = "DisplayPort 2",
+  [8] = "USB 2",
+  [9] = "Card DVI-D",
+  [10] = "Display Port 1",
+  [11] = "Card OPS",
+  [12] = "USB 1",
+  [13] = "HDMI",
+  [14] = "DVI-D",
+  [15] = "HDMI 3",
+  [16] = "BROWSER",
+  [17] = "SMART CMS",
+  [18] = "DMS (Digital Media Server)",
+  [19] = "INTERNAL STORAGE",
+  [20] = "Reserved 1",
+  [21] = "Reserved 2",
+  [22] = "Media Player",
+  [23] = "PDF Player",
+  [24] = "Custom",
+  [25] = "HDMI 4",
+  [26] = "VGA 2",
+  [27] = "VGA 3",
+  [28] = "IWB",
+  [29] = "CMND & Play Web",
+  [30] = "Home/Launcher",
+  [31] = "USB Type-C 1",
+  [32] = "Kiosk",
+  [33] = "Smart Info",
+  [34] = "Tuner",
+  [35] = "Google Cast",
+  [36] = "Interact",
+  [37] = "USB Type-C 2",
+}
 
 GetCommands = {  
   getNUMBER_OF_INPUT_SOURCES = {0xAB}, -- SICP v2.05 onwards  
-  getINPUT_SOURCE = {0xAD},  
-  getBOOT_SOURCE = {0xBA}, -- SICP v2.05 onwards  
-  getVIDEO_PARAMETERS = {0x33},  
+  getINPUT_SOURCE = {0xAD},
+  getBOOT_SOURCE = {0xBA}, -- SICP v2.05 onwards
+  getMODEL_NUMBER = {0xA1, 0x00},
+  getVIDEO_PARAMETERS = {0x33},
   getPOWER_STATE = {0x19},  
   getSICP_VERSION = {0xA2, 0x00},  
   getPLATFORM_LABEL = {0xA2, 0x01},  
-  getPLATFORM_VERSION = {0xA2, 0x02},  
-  getMODEL_NUMBER = {0xA1, 0x00},  
+  getPLATFORM_VERSION = {0xA2, 0x02}, 
   getFIRMWARE_VERSION = {0xA1, 0x01},  
   getBUILD_DATE = {0xA1, 0x02},  
   getANDROID_VERSION = {0xA1, 0x03}, -- NAV - Not Available on xxBDL3511Q -- NAV - Not Available: Command is valid but not supported in the current SICP implementation.  
@@ -100,13 +162,13 @@ SetCommands = {
 PollCommands = {  
   {0xAB}, --getNUMBER_OF_INPUT_SOURCES -- SICP v2.05 onwards  
   {0xAD}, --getINPUT_SOURCE  
-  {0xBA}, --getBOOT_SOURCE -- SICP v2.05 onwards  
+  {0xBA}, --getBOOT_SOURCE -- SICP v2.05 onwards
+  {0xA1, 0x00}, --getMODEL_NUMBER  
   {0x33}, --getVIDEO_PARAMETERS  
   {0x19}, --getPOWER_STATE  
   {0xA2, 0x00}, --getSICP_VERSION  
   {0xA2, 0x01}, --getPLATFORM_LABEL  
-  {0xA2, 0x02}, --getPLATFORM_VERSION  
-  {0xA1, 0x00}, --getMODEL_NUMBER  
+  {0xA2, 0x02}, --getPLATFORM_VERSION
   {0xA1, 0x01}, --getFIRMWARE_VERSION  
   {0xA1, 0x02}, --getBUILD_DATE  
   {0xA1, 0x03}, --getANDROID_VERSION -- NAV - Not Available on xxBDL3511Q  
@@ -133,4 +195,4 @@ PollCommands = {
   {0x3B}, --getPICTURE_FORMAT  
   {0x76}, --getFREEZEIMAGE -- SICP v2.06 onwards.  
   {0xF2}, --getSTORAGELOCK -- NACK - Not Acknowledged: Checksum/Format error on xxBDL3511Q  
-}  
+} 
