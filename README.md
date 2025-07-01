@@ -51,6 +51,9 @@ Last Byte: Checksum (range = 0 to 255(0x00 to 0xFF))
 
 - Within PollTimer.EventHandler, added logic to remove certain items from Polling for the 75BDL3151T. CurrentPollCommand will be increased by 1 (or reset to 1) to skip over the unsupported commands (getANDROID_VERSION,  getSTORAGELOCK)
 
+## 1st July 2025
+- Found the 43BDL4051T does not respond with an 'Acknowledge' for Power On, preventing the polling being paused, resulting in a Compromised status being set.
+- Within the Controls["Power"].EventHandler, added model# based logic for the 43BDL4051T to pause all polling and restart after 60 seconds.
 
 
 Philips Input Sources Table
